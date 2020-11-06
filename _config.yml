@@ -49,7 +49,7 @@ identifier: womiko
 disqus:
   # Leave shortname blank to disable comments site-wide.
   # Disable comments for any post by adding `comments: false` to that post's YAML Front Matter.
-  shortname: womiko
+  shortname: https-womiko-me
 
 # title-logo - display logo instead of text
 # 50px img height is optimal
