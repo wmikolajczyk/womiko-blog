@@ -25,6 +25,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://womiko.me/" # the base hostname & protocol for your site, e.g. http://example.com
 
+
 # media
 twitter_username: 
 github_username:  wmikolajczyk
@@ -38,6 +39,17 @@ author: Wojtek Mikołajczyk
 # Add a copyright. A copyright symbol and year will be added automatically
 # copyright: Company Name, Inc.
 copyright: "Wojtek Mikołajczyk"
+
+# disqus (comments)
+layout: default
+comments: true
+
+identifier: womiko
+
+disqus:
+  # Leave shortname blank to disable comments site-wide.
+  # Disable comments for any post by adding `comments: false` to that post's YAML Front Matter.
+  shortname: womiko
 
 # title-logo - display logo instead of text
 # 50px img height is optimal
