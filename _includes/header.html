@@ -8,9 +8,8 @@
     <a class="site-title" rel="author" href="{{ "/" | relative_url }}">
       {%- if site.title-logo -%}
         <img src="{{ site.title-logo | relative_url }}" alt="{{ site.title | escape }}" style="border-radius: 50%; width: 70px; padding: 5px 0px 5px;"/>
-      {%- else -%}
-        {{ site.title | escape }}
       {%- endif -%}
+      <span style="padding-left: 8px;">{{ site.title | escape }}</span>
     </a>
 
     {%- if page_paths -%}
