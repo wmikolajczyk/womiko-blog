@@ -15,7 +15,7 @@ I saw that memory usage constantly grows. It means that my script allocates more
 
 My script uses multiple threads - maybe it should be the first thing to check. I needed to pass some credentials data into each thread to be able to perform required actions. Bunch of threads works in a pool to perform input-output heavy operations in a loop - I bet for every iteration this credentials data is put into memory again for each thread.
 
-I made a code-review together with my friend and he helped me to find that this actually is a problem. I did a mistake in the way I was storing data in threads in Python. As a result of that in every next iteration thread didn't have access to previously stored data so it needed to be stored again - and allocated more memory.
+I made a code-review together with my friend and he helped me to find that this actually is a problem. There was a bug in the part of code that was storing data in threads in Python. As a result of that in every next iteration thread didn't have access to previously stored data so it needed to be stored again - and allocated more memory.
 ```Python3
 @property
 def client(self):
@@ -36,7 +36,7 @@ def client(self):
 After the fix, the script was able to process all this data in around 5 hours, thanks to multi-threaded operations which sped up the whole thing a lot.
 
 #### Key take aways:
-- some problems will appear ONLY when script is ran on MASSIVE scale
+- some problems will appear ONLY when Python script is ran on a MASSIVE scale
 - memory leak occurs when your application allocates more RAM than it frees in time
 - you can spot a memory leak by inspecting memory usage over time graph
 - memory leaks are pretty tough to debug - usually the only message you get is this "Out Of Memory" error
