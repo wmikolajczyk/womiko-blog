@@ -14,11 +14,12 @@ I checked the graph of memory usage over time, and it looked like that.
 
 I saw that memory usage constantly grows. It means that my script allocates more and more memory for objects, much faster than it frees some memory. This problem is called a *MEMORY LEAK*. So, why is that?...
 
-My script uses multiple threads - maybe it should be the first thing to check. I needed to pass some credentials data into each thread to be able to perform the required actions. A bunch of threads works in a pool to perform input-output heavy operations in a loop - I bet for every iteration this credentials data is put into memory again for each thread.
+My script uses multiple threads - maybe it should be the first thing to check. I needed to pass Google Cloud Storage Client object into each thread to be able to perform the required actions. A bunch of threads work in a pool to perform input-output heavy operations in a loop - I bet for every iteration this credentials data is put into memory again for each thread.
 
-I made a code-review together with my friend and he helped me to find that this actually is a problem. We found that when a thread needs to use credentials data it recreates an object with that for EVERY iteration for EVERY thread. This was the root cause of our memory leak problem.
+I performed a code-review together with my friend and he helped me to find that this actually is a problem. 
+Each thread creates a seemingly harmless GCS Client object every time the operation is performed. We've found out that it's not actually harmless - it was the root cause of the memory leak!
 
-The solution was to use threading.local() in Python - which allows storing data for each thread. After applying this fix - the credentials data object was created only once for each thread. The memory leak problem is solved now! :)
+The solution was to use threading.local() in Python ([https://docs.python.org/3.8/library/threading.html#threading.local](https://docs.python.org/3.8/library/threading.html#threading.local)) - which allows storing data for each thread. After applying this fix - GCS Client object was created only once for each thread. The memory leak problem is solved now! :)
 
 *Code with Memory Leak issue*
 ```python
@@ -53,7 +54,9 @@ class SomeClass:
                 project=self.project_id)
         return self.thread_local.gcs_client
 ```
-After the fix, the script was able to process all this data in around 5 hours, thanks to multi-threaded operations which sped up the whole thing a lot.
+
+
+After the fix, the script was able to process all this data in around 5 hours, thanks to multi-threaded operations which sped up the whole thing a lot. 
 
 #### Key takeaways:
 - some problems will appear ONLY when Python script is run on a MASSIVE scale
@@ -61,5 +64,6 @@ After the fix, the script was able to process all this data in around 5 hours, t
 - you can spot a memory leak by inspecting memory usage over time graph
 - memory leaks are pretty tough to debug - usually, the only message you get is this "Out Of Memory" error
 - when encountered a memory leak - then your goal is to find this piece of code which "eats" memory :)
+- GCS Client object isn't thread-safe and leaves some leftovers in the memory
 - threading in Python might be tricky - if you encounter some problems it's often good to take a step back to get a better understanding of what's going on under the hood
 - threading.local() in Python allows storing some data per thread
