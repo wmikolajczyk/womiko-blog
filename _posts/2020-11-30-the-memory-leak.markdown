@@ -8,17 +8,17 @@ Some time ago, when I was developing some data processing script in Python I enc
 
 Everything seemed to be fine until... I ran it to process a HUGE (1 400 000 files, 50GB) volume of data. The script was massively processing big data and suddenly a container with this script was killed due to Out Of Memory error. It was a script wrapped into a Docker container deployed on Kubernetes with defined some maximum usage of RAM limits. So, what actually happened, and why is that?
 
-In such cases that's always a good idea to check for CPU and memory usage over time graphs.
+In such cases, it's always a good idea to check for CPU and memory usage over time graphs.
 I checked the graph of memory usage over time, and it looked like that.
 ![image](/assets/images/memory_usage_over_time.png "memory usage over time")
 
 I saw that memory usage constantly grows. It means that my script allocates more and more memory for objects, much faster than it frees some memory. This problem is called a *MEMORY LEAK*. So, why is that?...
 
-My script uses multiple threads - maybe it should be the first thing to check. I needed to pass some credentials data into each thread to be able to perform required actions. Bunch of threads works in a pool to perform input-output heavy operations in a loop - I bet for every iteration this credentials data is put into memory again for each thread.
+My script uses multiple threads - maybe it should be the first thing to check. I needed to pass some credentials data into each thread to be able to perform the required actions. A bunch of threads works in a pool to perform input-output heavy operations in a loop - I bet for every iteration this credentials data is put into memory again for each thread.
 
-I made a code-review together with my friend and he helped me to find that this actually is a problem. We found that when thread needs to use credentials data it recreates an object with that for EVERY iteration for EVERY thread. This was the root cause of our memory leak problem.
+I made a code-review together with my friend and he helped me to find that this actually is a problem. We found that when a thread needs to use credentials data it recreates an object with that for EVERY iteration for EVERY thread. This was the root cause of our memory leak problem.
 
-The solution was to use threading.local() in Python - which allows to store data for each thread. After applying this fix - the credentials data object was created only once for each thread. The memory leak problem is solved now! :)
+The solution was to use threading.local() in Python - which allows storing data for each thread. After applying this fix - the credentials data object was created only once for each thread. The memory leak problem is solved now! :)
 
 *Code with Memory Leak issue*
 ```python
@@ -55,11 +55,11 @@ class SomeClass:
 ```
 After the fix, the script was able to process all this data in around 5 hours, thanks to multi-threaded operations which sped up the whole thing a lot.
 
-#### Key take aways:
-- some problems will appear ONLY when Python script is ran on a MASSIVE scale
+#### Key takeaways:
+- some problems will appear ONLY when Python script is run on a MASSIVE scale
 - memory leak occurs when your application allocates more RAM than it frees in time
 - you can spot a memory leak by inspecting memory usage over time graph
-- memory leaks are pretty tough to debug - usually the only message you get is this "Out Of Memory" error
+- memory leaks are pretty tough to debug - usually, the only message you get is this "Out Of Memory" error
 - when encountered a memory leak - then your goal is to find this piece of code which "eats" memory :)
 - threading in Python might be tricky - if you encounter some problems it's often good to take a step back to get a better understanding of what's going on under the hood
-- threading.local() in Python allows to store some data per thread
+- threading.local() in Python allows storing some data per thread
