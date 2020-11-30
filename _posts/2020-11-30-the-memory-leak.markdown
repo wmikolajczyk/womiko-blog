@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "The mystery of memory leak..."
+title:  "The mystery of the memory leak..."
 date:   2020-11-30 10:00:00 +0100
 ---
 Some time ago, when I was developing some data processing script in Python I encountered an interesting problem. I was sure I did everything well - my script worked as intended, all unit tests passed and I even tested the script on small data, and it worked properly. 
@@ -9,7 +9,7 @@ Everything seemed to be fine until... I ran it to process a HUGE volume of data.
 
 In such cases that's always a good idea to check for CPU and memory usage over time graphs.
 I checked the graph of memory usage over time, and it looked like that.
-![image](/assets/images/memory-usage-over-time.png "memory usage over time")
+![image](/assets/images/memory_usage_over_time.png "memory usage over time")
 
 I saw that memory usage constantly grows. It means that my script allocates more and more memory for objects, much faster than it frees some memory. This problem is called a *MEMORY LEAK*. So, why is that?...
 
@@ -17,11 +17,21 @@ My script uses multiple threads - maybe it should be the first thing to check. I
 
 I made a code-review together with my friend and he helped me to find that this actually is a problem. I did a mistake in the way I was storing data in threads in Python. As a result of that in every next iteration thread didn't have access to previously stored data so it needed to be stored again - and allocated more memory.
 ```Python3
-TODO - code snippet
+@property
+def client(self):
+    thread_local = threading.local()
+    if "some_client" not in thread_local.__dict__:
+        thread_local.some_client = some.Client(arg=arg)
+    return thread_local.some_client
 ```
 Now I was able to fix that and store the thread credentials data properly.
 ```Python3
-TODO -fixed code
+@property
+def client(self):
+    thread_local = threading.local()
+    if "some_client" not in thread_local.__dict__:
+        self.thread_local.some_client = some.Client(arg=arg)
+    return self.some_client
 ```
 After the fix, the script was able to process all this data in around 5 hours, thanks to multi-threaded operations which sped up the whole thing a lot.
 
