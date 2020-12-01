@@ -4,7 +4,7 @@ title:  "The mystery of the memory leak..."
 date:   2020-11-30 10:00:00 +0100
 tags: python memory-leak gcs google-cloud-storage
 ---
-Some time ago, when I was developing some data processing script in Python. I was sure I did everything well - my script worked as intended, all unit tests passed and I even tested the script on small data, and it worked properly. But I encountered an interesting problem, the execution failed...
+Some time ago, I was developing some data processing script in Python. I was sure I did everything well - my script worked as intended, all unit tests passed and I even tested the script on small data, and it worked properly. But I encountered an interesting problem, the execution failed...
 
 Everything seemed to be fine until... I ran it to process a HUGE (1 400 000 files, 50GB) volume of data. The script was massively processing big data but suddenly a container, in which the script was run, was killed due to Out Of Memory error. The script was wrapped into a Docker container and deployed on the Kubernetes with defined maximum usage of RAM limit. So, what actually happened?
 
@@ -16,14 +16,14 @@ I saw that memory usage constantly grows. It means that my script allocates more
 
 I had to process a big volume of data, so to speed up processing I used multithreading in Python. The threads were my first suspect, so I started to analyze how I use them.
 
-I needed to provide GCS (Google Cloud Storage) client object for each thread to be able to perform my data processing. Google Cloud Storage Client isn't thread-safe so each thread requires its own copy of that. During the script execution, a bunch of threads is working in a pool, performing input-output heavy operations in a loop. Probably the problem lies in a way of storing data in the threads. Let's verify that!
+I needed to provide GCS (Google Cloud Storage) client object for each thread to be able to perform my data processing. Google Cloud Storage client isn't thread-safe so each thread requires its own copy of that. During the script execution, a bunch of threads is working in a pool, performing input-output heavy operations in a loop. Probably the problem lies in a way of storing data in the threads. Let's verify that!
 
 I performed a code-review together with my friend and he helped me to find that this actually is a problem. 
 Each thread created a seemingly harmless GCS Client object every time the operation is performed. We've found out that it's not actually harmless - it was the root cause of the memory leak!
 
-The solution was to use threading.local() in Python ([docs.python.org/...#threading.local](https://docs.python.org/3.8/library/threading.html#threading.local)) - which allows storing data for each thread. After applying this fix - GCS client object was created only once for each thread. The memory leak problem is solved now! :)
+The solution was to use *threading.local()* in Python ([docs.python.org/...#threading.local](https://docs.python.org/3.8/library/threading.html#threading.local)) - which allows storing data for each thread. After applying this fix - GCS client object was created only once for each thread. The memory leak problem is solved now! :)
 
-*Code with Memory Leak issue*
+*Code with the Memory Leak issue*
 ```python
 from google.cloud import storage
 
@@ -38,7 +38,7 @@ class SomeClass:
         return storage.Client(project=self.project_id)
 ```
 
-*Code after applying fix - usage of threading.local()*
+*Code after applying fix - using threading.local()*
 ```python
 from google.cloud import storage
 
