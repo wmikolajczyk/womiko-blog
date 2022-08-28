@@ -17,7 +17,7 @@ Business people are often not aware of what is possible, and where are the limit
 
 The things described above might be some of the challenges, but there is one more, probably the biggest of them. Machine learning and AI have an experimental nature. It's almost impossible to tell if the designed solutions will work in practice or not. It requires experiments, and usually a lot of iterations on the whole process of collecting the data, cleaning and preprocessing, and model training.
 
-Luckily, those problems are common in this area and a lot more people have occurred them. There are some good practices, how to start a machine learning project properly, what are the most important points to define, and in general, how to approach developing an AI solution.
+Luckily, those problems are common in this area and a lot more people have occurred them. There are some good practices on how to start a machine learning project properly, what are the most important points to define, and in general, how to approach developing an AI solution.
 
 #### Machine Learning Project Checklist:
 - what is the goal?
