@@ -4,12 +4,12 @@ title: "How to start a machine learning project properly?"
 date: 2022-08-28 18:00:00 +0100
 tags: machine learning ml machine-learning python project start
 ---
-![image](/assets/images/rocket.png "starting a project"){: width="200" style="display:block; margin-left:auto; margin-right:auto"}\
-<span>image: <a href="https://www.flaticon.com/free-icons/rocket" title="rocket icons">Rocket icons created by Freepik - Flaticon</a></span>{:style="display:table; margin-left:auto; margin-right:auto; font-size:12px;"}
-
 Machine learning is getting more and more popular nowadays. Companies are creating or extending their R&D teams. Having a product that delivers some kind of AI solution is prestigious.
 
 In terms of software development, building business web applications is a quite mature field. There are well-known practices and methodologies on how to plan, design, and implement a solution. But AI is quite a greenfield and when it comes to building AI solutions, it's a big challenge how to do it well.
+
+![image](/assets/images/rocket.png "starting a project"){: width="200" style="display:block; margin-left:auto; margin-right:auto"}\
+<span>image: <a href="https://www.flaticon.com/free-icons/rocket" title="rocket icons">Rocket icons created by Freepik - Flaticon</a></span>{:style="display:table; margin-left:auto; margin-right:auto; font-size:12px;"}
 
 Machine learning and in general AI are very fast-paced in terms of development. The SOTA (State Of The Art) models and solutions are changing rapidly, and new tools and libraries are being released.
 
