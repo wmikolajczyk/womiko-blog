@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "How to start a machine learning project properly?"
+title: "How to start a machine learning project?"
 date: 2022-08-28 18:00:00 +0100
 tags: machine learning ml machine-learning python project start
 ---
