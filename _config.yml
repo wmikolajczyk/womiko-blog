@@ -30,7 +30,7 @@ url: "https://womiko.me" # the base hostname & protocol for your site, e.g. http
 twitter_username: 
 github_username:  wmikolajczyk
 linkedin_username: wojciech-mikolajczyk
-youtube_username: ml-workout
+youtube_username: "@ml-workout"
 
 # Fields minima uses, but are not defaulted with the jekyll new command
 # Author is the default for posts, the Atom feed, and is used in the footer
